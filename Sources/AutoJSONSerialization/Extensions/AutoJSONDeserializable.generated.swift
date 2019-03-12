@@ -432,22 +432,10 @@ extension TypealiasedDateArrayProperty: JSONDeserializable {
             throw AutoJSONDeserializableError.typeMismatchError([String: Any].self)
         }
         if let momentArrayRawValue = JSONDictionary["momentArray"], !(momentArrayRawValue is NSNull) {
-            do {
-                guard let castedArray = momentArrayRawValue as? [Any] else {
-                    throw AutoJSONDeserializableError.typeMismatchError([Date].self)
-                }
-                self.momentArray = try castedArray.enumerated().map { indexElementTuple -> Date in
-                    let index = indexElementTuple.0
-                    let element = indexElementTuple.1
-                    do {
-                        return try Date(JSONObject: element)
-                    } catch let error as AutoJSONDeserializableError {
-                        throw error.nestedUnderKey(.index(index))
-                    }
-                }
-            } catch let error as AutoJSONDeserializableError {
-                throw error.nestedUnderKey(.name("momentArray"))
+            guard let momentArray = momentArrayRawValue as? [Moment] else {
+                throw AutoJSONDeserializableError.typeMismatchError([Moment].self, keyPath: .init(key: .name("momentArray")))
             }
+            self.momentArray = momentArray
         } else {
             throw AutoJSONDeserializableError.keyNotFoundError("momentArray")
         }
@@ -461,22 +449,18 @@ extension TypealiasedDateProperty: JSONDeserializable {
             throw AutoJSONDeserializableError.typeMismatchError([String: Any].self)
         }
         if let momentInTimeRawValue = JSONDictionary["momentInTime"], !(momentInTimeRawValue is NSNull) {
-            do {
-                let momentInTime = try MomentInTime(JSONObject: momentInTimeRawValue)
-                self.momentInTime = momentInTime
-            } catch let error as AutoJSONDeserializableError {
-                throw error.nestedUnderKey(.name("momentInTime"))
+            guard let momentInTime = momentInTimeRawValue as? MomentInTime else {
+                throw AutoJSONDeserializableError.typeMismatchError(MomentInTime.self, keyPath: .init(key: .name("momentInTime")))
             }
+            self.momentInTime = momentInTime
         } else {
             throw AutoJSONDeserializableError.keyNotFoundError("momentInTime")
         }
         if let optionalMomentInTimeRawValue = JSONDictionary["optionalMomentInTime"], !(optionalMomentInTimeRawValue is NSNull) {
-            do {
-                let optionalMomentInTime = try MomentInTime(JSONObject: optionalMomentInTimeRawValue)
-                self.optionalMomentInTime = optionalMomentInTime
-            } catch let error as AutoJSONDeserializableError {
-                throw error.nestedUnderKey(.name("optionalMomentInTime"))
+            guard let optionalMomentInTime = optionalMomentInTimeRawValue as? MomentInTime else {
+                throw AutoJSONDeserializableError.typeMismatchError(MomentInTime.self, keyPath: .init(key: .name("optionalMomentInTime")))
             }
+            self.optionalMomentInTime = optionalMomentInTime
         } else {
             self.optionalMomentInTime = nil
         }

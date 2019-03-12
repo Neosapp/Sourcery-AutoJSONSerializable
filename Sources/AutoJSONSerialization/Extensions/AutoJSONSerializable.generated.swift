@@ -11,7 +11,7 @@ import Foundation
 extension ArrayProperty: JSONSerializable {
     internal func toJSONObject() -> Any {
         var jsonObject = [String: Any]()
-        let array = self.array.map { $0.toJSONObject() }
+        let array = self.array.map {  $0.toJSONObject()  }
         jsonObject["array"] = array
         return jsonObject
     }
@@ -21,11 +21,11 @@ extension ArrayProperty: JSONSerializable {
 extension BasicTypesArrayProperty: JSONSerializable {
     internal func toJSONObject() -> Any {
         var jsonObject = [String: Any]()
-        let doubleArray = self.doubleArray.map { $0 }
+        let doubleArray = self.doubleArray.map {  $0  }
         jsonObject["doubleArray"] = doubleArray
-        let integerArray = self.integerArray.map { $0 }
+        let integerArray = self.integerArray.map {  $0  }
         jsonObject["integerArray"] = integerArray
-        let stringArray = self.stringArray.map { $0 }
+        let stringArray = self.stringArray.map {  $0  }
         jsonObject["stringArray"] = stringArray
         return jsonObject
     }
@@ -35,7 +35,7 @@ extension BasicTypesArrayProperty: JSONSerializable {
 extension DateArrayProperty: JSONSerializable {
     internal func toJSONObject() -> Any {
         var jsonObject = [String: Any]()
-        let dateArray = self.dateArray.map { $0.toJSONObject() }
+        let dateArray = self.dateArray.map {  $0.toJSONObject()  }
         jsonObject["dateArray"] = dateArray
         return jsonObject
     }
@@ -57,7 +57,7 @@ extension DateProperty: JSONSerializable {
 extension EnumArrayProperty: JSONSerializable {
     internal func toJSONObject() -> Any {
         var jsonObject = [String: Any]()
-        let enumsArray = self.enumsArray.map { $0.rawValue }
+        let enumsArray = self.enumsArray.map {  $0.rawValue  }
         jsonObject["enumsArray"] = enumsArray
         return jsonObject
     }
@@ -181,7 +181,7 @@ extension StringEnumProperty: JSONSerializable {
 extension TypealiasedDateArrayProperty: JSONSerializable {
     internal func toJSONObject() -> Any {
         var jsonObject = [String: Any]()
-        let momentArray = self.momentArray.map { $0.toJSONObject() }
+        let momentArray = self.momentArray.map {  $0  }
         jsonObject["momentArray"] = momentArray
         return jsonObject
     }
@@ -191,9 +191,9 @@ extension TypealiasedDateArrayProperty: JSONSerializable {
 extension TypealiasedDateProperty: JSONSerializable {
     internal func toJSONObject() -> Any {
         var jsonObject = [String: Any]()
-        let momentInTime = self.momentInTime.toJSONObject()
+        let momentInTime = self.momentInTime
         jsonObject["momentInTime"] = momentInTime
-        let optionalMomentInTime = self.optionalMomentInTime?.toJSONObject()
+        let optionalMomentInTime = self.optionalMomentInTime
         jsonObject["optionalMomentInTime"] = optionalMomentInTime
         return jsonObject
     }

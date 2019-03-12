@@ -79,6 +79,12 @@ extension {{ type.name }}: JSONDeserializable {
             } catch let error as AutoJSONDeserializableError {
                 throw error.nestedUnderKey(.name("{{ jsonKey }}"))
             }
+            {% elif variable.isOptional and variable.typeName %}
+            if let {{ variable.name }} = {{ rawVariableName }} as? {{ variable.unwrappedTypeName }} {
+                self.{{ variable.name }} = {{ variable.name }}
+            } else {
+                self.{{ variable.name }} = nil
+            }
             {% elif variable.typeName %}
             guard let {{ variable.name }} = {{ rawVariableName }} as? {{ variable.typeName }} else {
                 throw AutoJSONDeserializableError.typeMismatchError({{  variable.typeName  }}.self, keyPath: .init(key: .name("{{ jsonKey}}")))
