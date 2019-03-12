@@ -31,11 +31,12 @@ extension {{ type.name }}: JSONDeserializable {
                 throw error.nestedUnderKey(.name("{{ jsonKey }}"))
             }
             {% elif variable.type.kind == "enum" and variable.type.rawTypeName %}
-            guard {% if variable.type.rawTypeName.name %}let castedVar = {{ rawVariableName }} as? {{ variable.type.rawTypeName.name }},
-                  {% endif %}let {{ variable.name }} = {{ variable.actualTypeName.unwrappedTypeName }}(rawValue: {% if variable.type.rawTypeName.name %}castedVar{% else %}{{ rawVariableName }}{% endif %}) else {
-                throw AutoJSONDeserializableError.typeMismatchError({{ variable.actualTypeName.unwrappedTypeName }}.self, keyPath: .init(key: .name("{{ jsonKey}}")))
+            if {% if variable.type.rawTypeName.name %}let castedVar = {{ rawVariableName }} as? {{ variable.type.rawTypeName.name }},
+                  {% endif %}let {{ variable.name }} = {{ variable.actualTypeName.unwrappedTypeName }}(rawValue: {% if variable.type.rawTypeName.name %}castedVar{% else %}{{ rawVariableName }}{% endif %}) {
+                self.{{ variable.name }} = {{ variable.name }}
+            } else {
+                self.{{ variable.name }} = .unknown
             }
-            self.{{ variable.name }} = {{ variable.name }}
             {% elif variable.unwrappedTypeName %}
             guard let {{ variable.name }} = {{ rawVariableName }} as? {{ variable.unwrappedTypeName }} else {
                 throw AutoJSONDeserializableError.typeMismatchError({{  variable.unwrappedTypeName  }}.self, keyPath: .init(key: .name("{{ jsonKey}}")))
@@ -68,11 +69,9 @@ extension {{ type.name }}: JSONDeserializable {
                 guard let castedArray = {{ rawVariableName }} as? [{{ variable.typeName.array.elementType.rawTypeName.name }}] else {
                     throw AutoJSONDeserializableError.typeMismatchError([{{ variable.typeName.array.elementType.rawTypeName.name }}].self)
                 }
-                self.{{ variable.name }} = try castedArray.enumerated().map { indexElementTuple -> {{ variable.typeName.array.elementType.name }} in
-                    let index = indexElementTuple.0
-                    let element = indexElementTuple.1
+                self.{{ variable.name }} = castedArray.map { element -> {{ variable.typeName.array.elementType.name }} in
                     guard let enumValue = {{ variable.typeName.array.elementTypeName.unwrappedTypeName }}(rawValue: element) else {
-                        throw AutoJSONDeserializableError.typeMismatchError({{ variable.typeName.array.elementType.name }}.self, keyPath: .init(key: .index(index)))
+                        return .unknown
                     }
                     return enumValue
                 }
